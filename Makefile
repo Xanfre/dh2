@@ -31,7 +31,7 @@ LD = g++
 DLLTOOL = dlltool
 RC = windres
 
-DEFINES = -DWINVER=0x0400 -D_WIN32_WINNT=0x0400 -DWIN32_LEAN_AND_MEAN
+DEFINES = -DWINVER=0x0400 -D_WIN32_WINNT=0x0400 -DWIN32_LEAN_AND_MEAN -D_NEWDARK
 INCLUDES = -I. -I$(LGDIR)
 LIBS = -luuid
 ARFLAGS = rc
@@ -105,7 +105,7 @@ libscriptparam.a: paramlib.o
 dh2.o: dh2.cpp dh2.h darkhook.h objprop.h
 
 dh2t1.o: dh2.cpp dh2.h darkhook.h objprop.h
-	$(CC) $(CFLAGS) $(CDEBUG) -DWINVER=0x0400 -D_WIN32_WINNT=0x0400 -DWIN32_LEAN_AND_MEAN -D_DARKGAME=1 $(INCLUDES) -o $@ -c $<
+	$(CC) $(CFLAGS) $(CDEBUG) -DWINVER=0x0400 -D_WIN32_WINNT=0x0400 -DWIN32_LEAN_AND_MEAN -D_DARKGAME=1 -D_NEWDARK $(INCLUDES) -o $@ -c $<
 
 dh2dll.o: dh2dll.cpp dh2.h darkhook.h
 
