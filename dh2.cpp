@@ -299,7 +299,7 @@ cDH2ScriptService::~cDH2ScriptService()
 cDH2ScriptService::cDH2ScriptService(IUnknown* pIFace)
 {
 	m_pScriptMan = pIFace;
-	m_pLinkMan = pIFace;
+	m_pPropMan = pIFace;
 	m_pLinkMan = pIFace;
 	m_pObjMan = pIFace;
 	m_pTraitMan = pIFace;
