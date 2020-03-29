@@ -82,9 +82,8 @@ dh2t1_exp.o: dh2dll.o
 dh2.osl: $(DLLOBJS)
 	$(LD) $(LDFLAGS) $(LDDEBUG) -Wl,--image-base=0x12200000 -o $@ $^ $(LGLIB) $(LIBS)
 
-dh2-t1.osl: $(DLLT1OBJS)
+dh2-t1.osl: $(DLL1OBJS)
 	$(LD) $(LDFLAGS) $(LDDEBUG) -Wl,--image-base=0x12200000 -o $@ $^ $(LGLIB) $(LIBS)
-	strip dh2-t1.osl
 
 libdh2.a: $(LIBOBJS)
 	$(AR) $(ARFLAGS) $@ $?

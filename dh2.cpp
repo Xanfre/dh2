@@ -557,6 +557,7 @@ void cDH2ScriptService::DoRelationNotify(int iAgent, eDHRegisterFlags eFlags, un
 		pMsg->typeDH = kDH_Relation;
 		pMsg->sRel.event = eLinkEvent(uEvent);
 		pMsg->sRel.pszRelName = pszName;
+		pRel->AddRef();
 		pMsg->sRel.pRel = pRel;
 		pMsg->sRel.lLinkId = lLinkId;
 		pMsg->sRel.iLinkSource = iLinkSource;
