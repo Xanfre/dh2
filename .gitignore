@@ -1,0 +1,6 @@
+*.lib
+*.obj
+*.exp
+*.res
+*.manifest
+*.osl
