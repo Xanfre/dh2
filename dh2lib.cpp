@@ -22,25 +22,40 @@
 #include "darkhook.h"
 #include <windows.h>
 
+#include <lg/interface.h>
+#include <lg/scrservices.h>
+
 /* OSL sorts next to OSM nicely,
  * And will be copied by DarkLoader.
  */
 #define DH2_MODULENAME "DH2.OSL"
-#define DH2_INITPROCNAME "_DH2Init"
+#define DH2_INITPROCNAME "DH2Init"
 
 typedef Bool (__cdecl *DHInitProc)(IScriptMan* pScriptMan, IMalloc* pMalloc);
 
-HANDLE DarkHookLoadLibrary(void)
+HANDLE DarkHookLoadLibrary(IScriptMan* pSM)
 {
-	HMODULE hDH2 = ::GetModuleHandleA(DH2_MODULENAME);
+	Bool bFound = false;
+	cScrStr path;
+	path.MakeNull();
+	try
+	{
+		SService<IEngineSrv> pES(pSM);
+		bFound = pES->FindFileInPath("script_module_path", DH2_MODULENAME, path);
+	}
+	catch (no_interface&)
+	{
+	}
+	HMODULE hDH2 = ::GetModuleHandleA(bFound ? path : DH2_MODULENAME);
 	if (!hDH2)
-		hDH2 = ::LoadLibraryA(DH2_MODULENAME);
+		hDH2 = ::LoadLibraryA(bFound ? path : DH2_MODULENAME);
+	path.Free();
 	return reinterpret_cast<HANDLE>(hDH2);
 }
 
 Bool DarkHookInitializeService(IScriptMan* pSM, IMalloc* pMalloc)
 {
-	HMODULE hDH2 = reinterpret_cast<HMODULE>(DarkHookLoadLibrary());
+	HMODULE hDH2 = reinterpret_cast<HMODULE>(DarkHookLoadLibrary(pSM));
 	if (!hDH2)
 		return FALSE;
 
