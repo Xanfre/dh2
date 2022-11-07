@@ -64,8 +64,8 @@ void cDH2ScriptService::HandleProperty(sPropertyListenMsg* pPropMsg)
 	//if (!(m_pSimMan->LastMsg() & 9))
 	//	return;
 
-	static const char __event[] = { 0,1,2,2,3,3,3,3,0,1,2,2,3,3,3,3 };
-	int event = __event[pPropMsg->event & 0xF];
+	static const char ___event[] = { 0,1,2,2,3,3,3,3,0,1,2,2,3,3,3,3 };
+	int event = ___event[pPropMsg->event & 0xF];
 	if (pPropMsg->event & kPropertyInherited)
 		event |= kProp_Inherited;
 
@@ -126,8 +126,8 @@ void cDH2ScriptService::HandleRelation(sRelationListenMsg* pRelMsg)
 	//if (!(m_pSimMan->LastMsg() & 9))
 	//	return;
 
-	static const char __event[] = { 0,1,2,2,3,3,3,3,3,3,3,3,3,3,3,3 };
-	int event = __event[pRelMsg->event & 0xF];
+	static const char ___event[] = { 0,1,2,2,3,3,3,3,3,3,3,3,3,3,3,3 };
+	int event = ___event[pRelMsg->event & 0xF];
 
 	SInterface<IRelation> pRel = m_pLinkMan->GetRelation(pRelMsg->flavor);
 	const sRelationDesc* pRelDesc = pRel->Describe();
@@ -510,17 +510,68 @@ STDMETHODIMP_(void) cDH2ScriptService::UninstallHierarchyHook(int iAgent, int iO
 
 // Notifiers
 
+static void DoPostMessage(IScriptMan* pSM, int iSrc, int iDest, const char* psz, const cMultiParm& data1, const cMultiParm& data2, const cMultiParm& data3)
+{
+#ifdef __GNUC__
+	asm("push edi\n"
+	"\tmov edi,esp\n"
+	"\tsub esp,0x20\n"
+	"\tmov eax,%0\n"
+	"\tmov edx,dword ptr [eax]\n"
+	"\tmov dword ptr [esp+0x1C],0x8\n"
+	"\tmov ecx,%6\n"
+	"\tmov dword ptr [esp+0x18],ecx\n"
+	"\tmov ecx,%5\n"
+	"\tmov dword ptr [esp+0x14],ecx\n"
+	"\tmov ecx,%4\n"
+	"\tmov dword ptr [esp+0x10],ecx\n"
+	"\tmov ecx,%3\n"
+	"\tmov dword ptr [esp+0xC],ecx\n"
+	"\tmov ecx,%2\n"
+	"\tmov dword ptr [esp+0x8],ecx\n"
+	"\tmov ecx,%1\n"
+	"\tmov dword ptr [esp+0x4],ecx\n"
+	"\tmov dword ptr [esp],eax\n"
+	"\tcall dword ptr [edx+0x6C]\n"
+	"\tmov esp,edi\n"
+	"\tpop edi\n"
+	:: "g"(pSM), "g"(iSrc), "g"(iDest), "g"(psz), "g"(&data1), "g"(&data2), "g"(&data3)
+	);
+#else
+	_asm {
+		push edi
+		mov  edi,esp
+		sub  esp,0x20
+		mov  eax,pSM
+		mov  edx,dword ptr [eax]
+		mov  dword ptr [esp+0x1C],kScrMsgPostToOwner
+		mov  ecx,data3
+		mov  dword ptr [esp+0x18],ecx
+		mov  ecx,data2
+		mov  dword ptr [esp+0x14],ecx
+		mov  ecx,data1
+		mov  dword ptr [esp+0x10],ecx
+		mov  ecx,psz
+		mov  dword ptr [esp+0xC],ecx
+		mov  ecx,dword ptr iDest
+		mov  dword ptr [esp+0x8],ecx
+		mov  ecx,dword ptr iSrc
+		mov  dword ptr [esp+0x4],ecx
+		mov  dword ptr [esp],eax
+		call dword ptr [edx+0x6C]
+		mov  esp,edi
+		pop  edi
+	}
+#endif
+}
+
 void cDH2ScriptService::DoPropertyNotify(int iAgent, eDHRegisterFlags eFlags, unsigned int uEvent, const char* pszName, int iObjId, IProperty* pProp)
 {
 	if (eFlags & kDHNotifyAsync)
 	{
 		char szData[64];
 		sprintf(szData, "%d,%s", iObjId, pszName);
-#if (_DARKGAME == 1)
-		m_pScriptMan->PostMessage2(0,iAgent,"DHNotifyAsync",int(kDH_Property),int(uEvent),szData);
-#else
-		m_pScriptMan->PostMessage2(0,iAgent,"DHNotifyAsync",int(kDH_Property),int(uEvent),szData,0);
-#endif
+		DoPostMessage(m_pScriptMan,0,iAgent,"DHNotifyAsync",int(kDH_Property),int(uEvent),szData);
 	}
 	else
 	{
@@ -542,11 +593,7 @@ void cDH2ScriptService::DoRelationNotify(int iAgent, eDHRegisterFlags eFlags, un
 {
 	if (eFlags & kDHNotifyAsync)
 	{
-#if (_DARKGAME == 1)
-		m_pScriptMan->PostMessage2(0,iAgent,"DHNotifyAsync",int(kDH_Relation),int(uEvent),int(lLinkId));
-#else
-		m_pScriptMan->PostMessage2(0,iAgent,"DHNotifyAsync",int(kDH_Relation),int(uEvent),int(lLinkId),0);
-#endif
+		DoPostMessage(m_pScriptMan,0,iAgent,"DHNotifyAsync",int(kDH_Relation),int(uEvent),int(lLinkId));
 	}
 	else
 	{
@@ -571,11 +618,7 @@ void cDH2ScriptService::DoObjectNotify(int iAgent, eDHRegisterFlags eFlags, unsi
 {
 	if (eFlags & kDHNotifyAsync)
 	{
-#if (_DARKGAME == 1)
-		m_pScriptMan->PostMessage2(0,iAgent,"DHNotifyAsync",int(kDH_Object),int(uEvent),iObjId);
-#else
-		m_pScriptMan->PostMessage2(0,iAgent,"DHNotifyAsync",int(kDH_Object),int(uEvent),iObjId,0);
-#endif
+		DoPostMessage(m_pScriptMan,0,iAgent,"DHNotifyAsync",int(kDH_Object),int(uEvent),iObjId);
 	}
 	else
 	{
@@ -597,11 +640,7 @@ void cDH2ScriptService::DoHierarchyNotify(int iAgent, eDHRegisterFlags eFlags, u
 	{
 		char szData[32];
 		sprintf(szData, "%d,%d", iObjId, iSubjId);
-#if (_DARKGAME == 1)
-		m_pScriptMan->PostMessage2(0,iAgent,"DHNotifyAsync",int(kDH_Trait),int(uEvent),szData);
-#else
-		m_pScriptMan->PostMessage2(0,iAgent,"DHNotifyAsync",int(kDH_Trait),int(uEvent),szData,0);
-#endif
+		DoPostMessage(m_pScriptMan,0,iAgent,"DHNotifyAsync",int(kDH_Trait),int(uEvent),szData);
 	}
 	else
 	{

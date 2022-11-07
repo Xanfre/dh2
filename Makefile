@@ -37,7 +37,7 @@ LIBS = -luuid
 ARFLAGS = rc
 LDFLAGS = -mwindows -mdll -static-libgcc -static-libstdc++ -L$(LGDIR)
 CFLAGS = -W -Wall -masm=intel -std=gnu++0x
-DLLFLAGS = --add-underscore
+DLLFLAGS =
 ifdef DEBUG
 CDEBUG = -g -O0
 LDDEBUG = -g
@@ -48,11 +48,10 @@ LDDEBUG =
 LGLIB = -llg
 endif
 
-ALL = dh2.osl dh2-t1.osl libdh2.a
+ALL = dh2.osl libdh2.a
 
 DLLSRCS = dh2.cpp dh2dll.cpp dh2lib.cpp
 DLLOBJS = dh2_exp.o dh2.o dh2dll.o dh2_res.o
-DLL1OBJS = dh2t1_exp.o dh2t1.o dh2dll.o dh2_res.o
 
 .INTERMEDIATE:
 
@@ -68,7 +67,7 @@ LIBOBJS = dh2lib.o
 all:	$(ALL)
 
 clean:
-	$(RM) $(ALL) $(DLLOBJS) $(DLL1OBJS) $(LIBOBJS)
+	$(RM) $(ALL) $(DLLOBJS) $(LIBOBJS)
 
 dh2_res.o: dh2.rc
 	$(RC) $(DEFINES) -o $@ -i $<
@@ -76,13 +75,7 @@ dh2_res.o: dh2.rc
 dh2_exp.o: dh2dll.o
 	$(DLLTOOL) $(DLLFLAGS) --dllname dh2.osl --output-exp $@ $^
 
-dh2t1_exp.o: dh2dll.o
-	$(DLLTOOL) $(DLLFLAGS) --dllname dh2-t1.osl --output-exp $@ $^
-
 dh2.osl: $(DLLOBJS)
-	$(LD) $(LDFLAGS) $(LDDEBUG) -Wl,--image-base=0x12200000 -o $@ $^ $(LGLIB) $(LIBS)
-
-dh2-t1.osl: $(DLL1OBJS)
 	$(LD) $(LDFLAGS) $(LDDEBUG) -Wl,--image-base=0x12200000 -o $@ $^ $(LGLIB) $(LIBS)
 
 libdh2.a: $(LIBOBJS)
@@ -102,9 +95,6 @@ libscriptparam.a: paramlib.o
 
 
 dh2.o: dh2.cpp dh2.h darkhook.h objprop.h
-
-dh2t1.o: dh2.cpp dh2.h darkhook.h objprop.h
-	$(CC) $(CFLAGS) $(CDEBUG) -DWINVER=0x0400 -D_WIN32_WINNT=0x0400 -DWIN32_LEAN_AND_MEAN -D_DARKGAME=1 -D_NEWDARK $(INCLUDES) -o $@ -c $<
 
 dh2dll.o: dh2dll.cpp dh2.h darkhook.h
 

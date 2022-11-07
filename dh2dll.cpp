@@ -21,6 +21,11 @@
 
 #include "dh2.h"
 #include <windows.h>
+#ifdef _MSC_VER
+#include <new>
+
+namespace std { const nothrow_t nothrow = nothrow_t(); }
+#endif
 
 IMalloc* g_pMalloc = NULL;
 

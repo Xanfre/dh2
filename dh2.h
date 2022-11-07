@@ -81,16 +81,26 @@ private:
 
 	static sDispatchListenerDesc sm_simlistenerdesc;
 
+#if _MSC_FULL_VER == 150030729
+	typedef std::tr1::unordered_map<int,PropListenerHandle> prophook_map;
+	typedef std::tr1::unordered_map<int,bool> relhook_map;
+#else
 	typedef std::unordered_map<int,PropListenerHandle> prophook_map;
 	typedef std::unordered_map<int,bool> relhook_map;
+#endif
 	static prophook_map sm_prophookhandles;
 	static relhook_map  sm_relhookactive;
 	static int 	 sm_objhookhandle;
 	static bool	 sm_traithookactive;
 
 	typedef std::list<std::pair<int,eDHRegisterFlags> > objlist;
+#if _MSC_FULL_VER == 150030729
+	typedef std::tr1::unordered_map<objprop,objlist,objprop_hash> objprop_map;
+	typedef std::tr1::unordered_map<int,objlist> obj_map;
+#else
 	typedef std::unordered_map<objprop,objlist,objprop_hash> objprop_map;
 	typedef std::unordered_map<int,objlist> obj_map;
+#endif
 	objprop_map m_proptree;
 	objprop_map	m_reltree;
 	obj_map m_objtree;

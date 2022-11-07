@@ -26,22 +26,22 @@ APPVER=4.0
 srcdir = .
 LGDIR = ..\lg
 
-DEFINES = -DWINVER=0x0400 -D_WIN32_WINNT=0x0400 -DWIN32_LEAN_AND_MEAN -D_CRT_SECURE_NO_WARNINGS
+DEFINES = -DWINVER=0x0400 -D_WIN32_WINNT=0x0400 -DWIN32_LEAN_AND_MEAN -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE -D_SCL_SECURE_NO_WARNINGS -D_NEWDARK
 INCLUDES = -I. -I$(LGDIR)
 LIBS = uuid.lib $(baselibs)
-LDFLAGS = -nologo $(dlllflags) -c -base:0x12200000
+LDFLAGS = -nologo $(dlllflags) -base:0x12200000
 LIBDIRS =
 CFLAGS = $(cflags) -nologo -W3
 CXXFLAGS = $(CFLAGS) -TP -EHsc
 LIBFLAGS = -nologo
 !ifdef DEBUG
-CDEBUG = -MTd -Od -DDEBUG=1
+CDEBUG = -MDd -Od -DDEBUG=1
 LDDEBUG = -DEBUG
-LGLIB = lg-d.lib
+LGLIB = $(LGDIR)\lg-d.lib
 !else
-CDEBUG = -MT -Ox -DNDEBUG
+CDEBUG = -MD -Ox -DNDEBUG
 LDDEBUG = -RELEASE
-LGLIB = lg.lib
+LGLIB = $(LGDIR)\lg.lib
 !endif
 
 ALL = dh2.osl dh2.lib
@@ -65,7 +65,7 @@ LIBOBJS = dh2lib.obj
 all:	$(ALL)
 
 clean:
-	-del /q $(ALL) $(DLLOBJS) $(DLLRES) $(LIBOBJS)
+	del /q $(ALL) $(DLLOBJS) $(DLLRES) $(LIBOBJS) *.exp *.manifest
 
 dh2.osl: $(DLLOBJS) $(DLLRES)
 	$(link) $(LDFLAGS) $(LDDEBUG) $(LIBDIRS) -out:$@ $** $(LGLIB) $(LIBS)
