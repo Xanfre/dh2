@@ -25,11 +25,20 @@
 srcdir = .
 LGDIR = ../lg
 
+TARGET ?=
+ifeq ($(TARGET),)
 CC = g++
 AR = ar
 LD = g++
 DLLTOOL = dlltool
 RC = windres
+else
+CC = $(TARGET)-g++
+AR = $(TARGET)-ar
+LD = $(TARGET)-g++
+DLLTOOL = $(TARGET)-dlltool
+RC = $(TARGET)-windres
+endif
 
 DEFINES = -DWINVER=0x0400 -D_WIN32_WINNT=0x0400 -DWIN32_LEAN_AND_MEAN -D_NEWDARK
 INCLUDES = -I. -I$(LGDIR)
@@ -43,7 +52,7 @@ CDEBUG = -g -O0
 LDDEBUG = -g
 LGLIB = -llg-d
 else
-CDEBUG = -O2
+CDEBUG = -O2 -ffunction-sections -fdata-sections
 LDDEBUG =
 LGLIB = -llg
 endif
@@ -76,7 +85,7 @@ dh2_exp.o: dh2dll.o
 	$(DLLTOOL) $(DLLFLAGS) --dllname dh2.osl --output-exp $@ $^
 
 dh2.osl: $(DLLOBJS)
-	$(LD) $(LDFLAGS) $(LDDEBUG) -Wl,--image-base=0x12200000 -o $@ $^ $(LGLIB) $(LIBS)
+	$(LD) $(LDFLAGS) $(LDDEBUG) -Wl,--gc-sections,-s,--image-base=0x12200000 -o $@ $^ $(LGLIB) $(LIBS)
 
 libdh2.a: $(LIBOBJS)
 	$(AR) $(ARFLAGS) $@ $?
@@ -88,7 +97,7 @@ paramexp.o: paramdll.o
 	$(DLLTOOL) $(DLLFLAGS) --output-exp $@ $^
 
 params.osl: paramexp.o params.o paramdll.o paramres.o
-	$(LD) $(LDFLAGS) -Wl,--image-base=0x12300000 -o $@ $^ $(LIBS)
+	$(LD) $(LDFLAGS) -Wl,--gc-sections,-s,--image-base=0x12300000 -o $@ $^ $(LIBS)
 
 libscriptparam.a: paramlib.o
 	$(AR) $(ARFLAGS) $@ $?
