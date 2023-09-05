@@ -46,14 +46,14 @@ LIBS = -luuid
 ARFLAGS = rc
 LDFLAGS = -mwindows -mdll -static-libgcc -static-libstdc++ -L$(LGDIR)
 CFLAGS = -W -Wall -masm=intel -std=gnu++0x
-DLLFLAGS =
+DLLFLAGS = --add-underscore
 ifdef DEBUG
 CDEBUG = -g -O0
 LDDEBUG = -g
 LGLIB = -llg-d
 else
-CDEBUG = -O2 -ffunction-sections -fdata-sections
-LDDEBUG =
+CDEBUG = -O2
+LDDEBUG = -Wl,--strip-all
 LGLIB = -llg
 endif
 
@@ -85,7 +85,7 @@ dh2_exp.o: dh2dll.o
 	$(DLLTOOL) $(DLLFLAGS) --dllname dh2.osl --output-exp $@ $^
 
 dh2.osl: $(DLLOBJS)
-	$(LD) $(LDFLAGS) $(LDDEBUG) -Wl,--gc-sections,-s,--image-base=0x12200000 -o $@ $^ $(LGLIB) $(LIBS)
+	$(LD) $(LDFLAGS) $(LDDEBUG) -Wl,--image-base=0x12200000 -o $@ $^ $(LGLIB) $(LIBS)
 
 libdh2.a: $(LIBOBJS)
 	$(AR) $(ARFLAGS) $@ $?
@@ -97,7 +97,7 @@ paramexp.o: paramdll.o
 	$(DLLTOOL) $(DLLFLAGS) --output-exp $@ $^
 
 params.osl: paramexp.o params.o paramdll.o paramres.o
-	$(LD) $(LDFLAGS) -Wl,--gc-sections,-s,--image-base=0x12300000 -o $@ $^ $(LIBS)
+	$(LD) $(LDFLAGS) -Wl,--image-base=0x12300000 -o $@ $^ $(LIBS)
 
 libscriptparam.a: paramlib.o
 	$(AR) $(ARFLAGS) $@ $?

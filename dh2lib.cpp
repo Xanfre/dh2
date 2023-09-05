@@ -29,7 +29,7 @@
  * And will be copied by DarkLoader.
  */
 #define DH2_MODULENAME "DH2.OSL"
-#define DH2_INITPROCNAME "DH2Init"
+#define DH2_INITPROCNAME "_DH2Init"
 
 typedef Bool (__cdecl *DHInitProc)(IScriptMan* pScriptMan, IMalloc* pMalloc);
 

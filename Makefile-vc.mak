@@ -29,7 +29,7 @@ LGDIR = ..\lg
 DEFINES = -DWINVER=0x0400 -D_WIN32_WINNT=0x0400 -DWIN32_LEAN_AND_MEAN -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE -D_SCL_SECURE_NO_WARNINGS -D_NEWDARK
 INCLUDES = -I. -I$(LGDIR)
 LIBS = uuid.lib $(baselibs)
-LDFLAGS = -nologo $(dlllflags) -base:0x12200000
+LDFLAGS = -nologo $(dlllflags) -base:0x12200000 -def:dh2dll.def
 LIBDIRS =
 CFLAGS = $(cflags) -nologo -W3
 CXXFLAGS = $(CFLAGS) -TP -EHsc

@@ -4,3 +4,5 @@
 *.res
 *.manifest
 *.osl
+*.o
+*.a
