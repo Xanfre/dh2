@@ -59,7 +59,17 @@ Bool DarkHookInitializeService(IScriptMan* pSM, IMalloc* pMalloc)
 	if (!hDH2)
 		return FALSE;
 
+#if __GNUC__ >= 8
+/* Using GetProcAddress properly here will emit this warning on GCC 8 and
+ * above, so explicitly ignore it.
+ */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-function-type"
+#endif
 	DHInitProc pfnDHInit = reinterpret_cast<DHInitProc>(::GetProcAddress(hDH2, DH2_INITPROCNAME));
+#if __GNUC__ >= 8
+#pragma GCC diagnostic pop
+#endif
 	if (!pfnDHInit)
 		return FALSE;
 

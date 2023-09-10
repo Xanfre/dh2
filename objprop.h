@@ -41,7 +41,15 @@ public:
 	objprop()
 		{ m_propname[0] = '\0'; m_objid = 0; }
 	objprop(const char * nm, int id)
-		{ if (nm) ::strncpy(m_propname,nm,32); else m_propname[0] = '\0'; m_objid = id; }
+		{
+			if (nm)
+			{
+				::strncpy(m_propname,nm,31);
+				m_propname[31] = '\0';
+			}
+			else m_propname[0] = '\0';
+			m_objid = id;
+		}
 	objprop(const std::string& nm, int id)
 		{ nm.copy(m_propname,31); m_objid = id; }
 	objprop& operator = (const objprop& cpy)

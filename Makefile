@@ -45,7 +45,7 @@ INCLUDES = -I. -I$(LGDIR)
 LIBS = -luuid
 ARFLAGS = rc
 LDFLAGS = -mwindows -mdll -static-libgcc -static-libstdc++ -L$(LGDIR)
-CFLAGS = -W -Wall -masm=intel -std=gnu++0x
+CFLAGS = -Wall -Wextra -masm=intel
 DLLFLAGS = --add-underscore
 ifdef DEBUG
 CDEBUG = -g -O0
