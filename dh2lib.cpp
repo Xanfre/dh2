@@ -46,6 +46,7 @@ HANDLE DarkHookLoadLibrary(IScriptMan* pSM)
 	catch (no_interface&)
 	{
 	}
+
 	HMODULE hDH2 = ::GetModuleHandleA(bFound ? path : DH2_MODULENAME);
 	if (!hDH2)
 		hDH2 = ::LoadLibraryA(bFound ? path : DH2_MODULENAME);

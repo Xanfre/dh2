@@ -173,7 +173,7 @@ DEFINE_IIDSTRUCT(IDarkHookScriptService,IID_IDarkHookScriptService);
 /*
  * Library Utility Functions
  */
-HANDLE DarkHookLoadLibrary(void);
+HANDLE DarkHookLoadLibrary(IScriptMan* pSM);
 Bool DarkHookInitializeService(IScriptMan* pSM, IMalloc* pMalloc);
 
 
