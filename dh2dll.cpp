@@ -25,6 +25,8 @@
 #include <new>
 
 namespace std { const nothrow_t nothrow = nothrow_t(); }
+#else
+extern "C" { const void *__dyn_tls_init_callback = NULL; }
 #endif
 
 IMalloc* g_pMalloc = NULL;
