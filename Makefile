@@ -44,7 +44,7 @@ DEFINES = -DWINVER=0x0400 -D_WIN32_WINNT=0x0400 -DWIN32_LEAN_AND_MEAN -D_NEWDARK
 INCLUDES = -I. -I$(LGDIR)
 LIBS = -luuid
 ARFLAGS = rc
-LDFLAGS = -mwindows -mdll -static-libgcc -static-libstdc++ -L$(LGDIR)
+LDFLAGS = -mwindows -mdll -static-libgcc -static-libstdc++ -Wl,--enable-auto-image-base -L$(LGDIR)
 CFLAGS = -Wall -Wextra -masm=intel
 DLLFLAGS = --add-underscore
 ifdef DEBUG
@@ -85,7 +85,7 @@ dh2_exp.o: dh2dll.o
 	$(DLLTOOL) $(DLLFLAGS) --dllname dh2.osl --output-exp $@ $^
 
 dh2.osl: $(DLLOBJS)
-	$(LD) $(LDFLAGS) $(LDDEBUG) -Wl,--image-base=0x12200000 -o $@ $^ $(LGLIB) $(LIBS)
+	$(LD) $(LDFLAGS) $(LDDEBUG) -o $@ $^ $(LGLIB) $(LIBS)
 
 libdh2.a: $(LIBOBJS)
 	$(AR) $(ARFLAGS) $@ $?
@@ -97,7 +97,7 @@ paramexp.o: paramdll.o
 	$(DLLTOOL) $(DLLFLAGS) --output-exp $@ $^
 
 params.osl: paramexp.o params.o paramdll.o paramres.o
-	$(LD) $(LDFLAGS) -Wl,--image-base=0x12300000 -o $@ $^ $(LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 libscriptparam.a: paramlib.o
 	$(AR) $(ARFLAGS) $@ $?
