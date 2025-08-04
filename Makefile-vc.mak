@@ -69,6 +69,7 @@ clean:
 
 dh2.osl: $(DLLOBJS) $(DLLRES)
 	$(link) $(LDFLAGS) $(LDDEBUG) $(LIBDIRS) -out:$@ $** $(LGLIB) $(LIBS)
+	mt -nologo -manifest dh2.osl.manifest -outputresource:dh2.osl;#1
 
 dh2.lib: $(LIBOBJS)
 	$(implib) $(libflags) -out:$@ $?
